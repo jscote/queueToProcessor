@@ -14,13 +14,19 @@
 
         for (var i = 0; i < queueConfig.types.length; i++) {
             var currentType = queueConfig.types[i];
-            if (currentType.mapToProcessor) {
+            if (!_.isUndefined(currentType.mapToProcessor)) {
                 currentType.listener = (function (type) {
                     var msgType = type;
                     return function (msg) {
                         var deferred = q.defer();
 
-                        Processor.getProcessor(msgType).then(function (processor) {
+                        var processorName = msgType;
+
+                        if(_.isFunction(currentType.mapToProcessor)) {
+                            processorName = currentType.mapToProcessor({messageType: msgType, message: msg});
+                        }
+
+                        Processor.getProcessor(processorName).then(function (processor) {
                             processor.execute(msg).then(function (result) {
                                 deferred.resolve();
                             }).fail(function(error) {
