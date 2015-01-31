@@ -5,6 +5,18 @@
 
     'use strict';
 
+    function executeProcessor(processorName, msg, deferred, msgType) {
+        Processor.getProcessor(processorName).then(function (processor) {
+            processor.execute(msg).then(function (result) {
+                deferred.resolve(result);
+            }).fail(function (error) {
+                deferred.reject(error);
+            });
+        }).fail(function (error) {
+            deferred.reject(error + ' :: msgType/processor = ' + msgType);
+        });
+    }
+
     module.exports = function (queueConfig) {
 
         if (_.isUndefined(queueConfig) ||
@@ -23,19 +35,12 @@
                         var processorName = msgType;
 
                         if(_.isFunction(currentType.mapToProcessor)) {
-                            processorName = currentType.mapToProcessor({messageType: msgType, message: msg});
+                            q.fcall(currentType.mapToProcessor, {messageType: msgType, message: msg}.then(function(name) {
+                                executeProcessor(name, msg, deferred, msgType);
+                            }));
+                        } else {
+                            executeProcessor(processorName, msg, deferred, msgType);
                         }
-
-                        Processor.getProcessor(processorName).then(function (processor) {
-                            processor.execute(msg).then(function (result) {
-                                deferred.resolve();
-                            }).fail(function(error) {
-                                deferred.reject(error);
-                            });
-                        }).fail(function (error) {
-                            deferred.reject(error + ' :: msgType/processor = ' + msgType);
-                        });
-
                         return deferred.promise;
                     }
                 }(currentType.type));
