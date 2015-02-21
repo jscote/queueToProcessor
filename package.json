@@ -1,9 +1,9 @@
 {
   "name": "jsai-queuetoprocessor",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "dependencies": {
-    "jsai-jobprocessor": "0.0.15",
-    "lodash": "^3.1.0",
+    "jsai-jobprocessor": "0.0.17",
+    "lodash": "^3.3.0",
     "q": "^1.1.2"
   },
   "description": "To map a processor based on a message type",
