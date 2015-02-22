@@ -1,8 +1,8 @@
 {
   "name": "jsai-queuetoprocessor",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "dependencies": {
-    "jsai-jobprocessor": "0.0.21",
+    "jsai-jobprocessor": "0.0.22",
     "lodash": "^3.3.0",
     "q": "^1.2.0"
   },
