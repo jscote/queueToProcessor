@@ -28,14 +28,14 @@
             var currentType = queueConfig.types[i];
             if (!_.isUndefined(currentType.mapToProcessor)) {
                 currentType.listener = (function (type) {
-                    var msgType = type;
+                    var msgType = type.type;
                     return function (msg) {
                         var deferred = q.defer();
 
                         var processorName = msgType;
 
-                        if(_.isFunction(currentType.mapToProcessor)) {
-                            q.fcall(currentType.mapToProcessor, {messageType: msgType, message: msg}.then(function(name) {
+                        if(_.isFunction(type.mapToProcessor)) {
+                            q.fcall(type.mapToProcessor, {messageType: msgType, message: msg}.then(function(name) {
                                 executeProcessor(name, msg, deferred, msgType);
                             }));
                         } else {
@@ -43,7 +43,7 @@
                         }
                         return deferred.promise;
                     }
-                }(currentType.type));
+                }(currentType));
             }
         }
     }
